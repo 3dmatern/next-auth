@@ -1,8 +1,9 @@
 "use client";
 
-import { cn } from "@/lib/cn";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+
+import { cn } from "@/lib/cn";
 
 export function NavLinks() {
     const pathname = usePathname();
@@ -12,7 +13,7 @@ export function NavLinks() {
     };
 
     return (
-        <nav className="py-4 flex flex-row gap-4">
+        <nav className="py-4 flex flex-row items-center justify-center gap-4">
             <Link
                 className={cn(
                     `hover:text-teal-600`,
@@ -26,7 +27,7 @@ export function NavLinks() {
             <Link
                 className={cn(
                     `hover:text-teal-600`,
-                    onIsActive("/") ? "text-teal-600" : ""
+                    onIsActive("/auth") ? "text-teal-600" : ""
                 )}
                 href="/auth"
             >
@@ -36,7 +37,7 @@ export function NavLinks() {
             <Link
                 className={cn(
                     `hover:text-teal-600`,
-                    onIsActive("/") ? "text-teal-600" : ""
+                    onIsActive("/auth/register") ? "text-teal-600" : ""
                 )}
                 href="/auth/register"
             >

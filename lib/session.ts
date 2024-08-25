@@ -1,8 +1,8 @@
 import "server-only";
-
-// TODO: https://nextjs.org/docs/app/building-your-application/authentication#2-encrypting-and-decrypting-sessions
-import { SessionPayload } from "@/lib/definitions";
 import { jwtVerify, SignJWT } from "jose";
+
+import { SessionPayload } from "@/lib/definitions";
+import { cookies } from "next/headers";
 
 const secretKey = process.env.SESSION_SECRET;
 const encodeKey = new TextEncoder().encode(secretKey);
@@ -24,4 +24,17 @@ export async function decrypt(session: string | undefined = "") {
     } catch (error) {
         console.error("Ошибка верификации сессии");
     }
-}
+};
+
+export async function createSession(userId: number) {
+    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+    const session = await encrypt({ userId, expiresAt });
+
+    cookies().set("session", session, {
+        httpOnly: true,
+        secure: true,
+        expires: expiresAt,
+        sameSite: "lax",
+        path: "/"
+    });
+};

@@ -1,5 +1,7 @@
 import bcrypt from "bcrypt";
+
 import { FormState, SignUpFormSchema } from "@/lib/definitions";
+import prisma from "@/lib/prisma";
 
 export async function signUp(state: FormState, formData: FormData) {
     // 1. Валидация полей формы
@@ -23,4 +25,17 @@ export async function signUp(state: FormState, formData: FormData) {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // 3. Вставьте пользователя в базу данных или вызовите API библиотеки аутентификации.
+    const newUser = await prisma.user.create({
+        data: {
+            name,
+            email,
+            password: hashedPassword
+        }
+    });
+    
+    if (!newUser) {
+        return {
+            message: "При создании учетной записи произошла ошибка."
+        }
+    }
 };
