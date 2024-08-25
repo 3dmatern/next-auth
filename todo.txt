@@ -1,0 +1,5 @@
+Продолжить основное чтение документации с:
+https://nextjs.org/docs/app/building-your-application/routing/linking-and-navigating
+
+Продолжить чтение и программирование аутентификации:
+https://nextjs.org/docs/app/building-your-application/authentication#2-encrypting-and-decrypting-sessions
