@@ -1,28 +1,38 @@
-import bcrypt from "bcrypt";
+"use server";
 
-import { FormState, SignUpFormSchema } from "@/lib/definitions";
-import prisma from "@/lib/prisma";
-import { createSession, deleteSession } from "@/lib/session";
+import bcrypt from "bcrypt";
 import { redirect } from "next/navigation";
 
-export async function signUp(state: FormState, formData: FormData) {
+import {
+    FormStateSignIn,
+    FormStateSignUp,
+    SignInFormSchema,
+    SignUpFormSchema
+} from "@/lib/definitions";
+import prisma from "@/lib/prisma";
+import { createSession, deleteSession } from "@/lib/session";
+
+export async function signUp(state: FormStateSignUp, formData: FormData) {
     // 1. Валидация полей формы
     const validatedFields = SignUpFormSchema.safeParse({
         name: formData.get("name"),
         email: formData.get("email"),
-        password: formData.get("password"),
+        password: formData.get("password")
     });
 
     // Если какие-либо поля формы невалидны, возвращаем ошибку
     if (!validatedFields.success) {
-        return {
-            errors: validatedFields.error.flatten().fieldErrors
-        };
+        return { errors: validatedFields.error.flatten().fieldErrors };
     }
 
     // 2. Дальнейшие действия по аутентификации...
     // например: сохранение данных в БД или связь с провайдером.
     const { name, email, password } = validatedFields.data;
+    const existingUser = await prisma.user.findUnique({ where: { email } });
+    if (existingUser) {
+        return { message: "Пользователь с таким email уже существует." };
+    }
+
     // например Хешируйте пароль пользователя перед его сохранением
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -45,10 +55,39 @@ export async function signUp(state: FormState, formData: FormData) {
     await createSession(newUser.id);
 
     // 5. Редирект пользователя
-    redirect("/");
+    redirect("/profile");
 };
 
-export function logOut() {
+export async function signIn(state: FormStateSignIn, formData: FormData) {
+    console.log(formData.get("email"));
+    const validatedFields = SignInFormSchema.safeParse({
+        email: formData.get("email"),
+        password: formData.get("password")
+    });
+    
+    if (!validatedFields.success) {
+        return { errors: validatedFields.error.flatten().fieldErrors };
+    }
+
+    const { email, password } = validatedFields.data;
+    const existingUser = await prisma.user.findUnique({
+        where: { email }
+    });
+    if (!existingUser) {
+        return { message: "Неверные учетные данные." };
+    }
+
+    const isVerifyPassword = await bcrypt.compare(password, existingUser.password);
+    if (!isVerifyPassword) {
+        return { message: "Неверные учетные данные." };
+    }
+
+    await createSession(existingUser.id);
+
+    redirect("/profile");
+};
+
+export async function logOut() {
     deleteSession();
     redirect("/auth");  
 };

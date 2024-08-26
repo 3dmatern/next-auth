@@ -4,7 +4,11 @@ import { useActionState, useState } from "react";
 import { useDebounce } from "use-debounce";
 
 import { signUp } from "@/actions/auth";
+
 import { ErrorMessage } from "../error-message";
+import { UiLabel } from "../form/ui-label";
+import { UiInput } from "../form/ui-input";
+import { UiButton } from "../form/ui-button";
 
 export function SignUpForm() {
     const [email, setEmail] = useState("");
@@ -12,42 +16,45 @@ export function SignUpForm() {
     const [emailDebounce] = useDebounce(email, 1000);
 
     return (
-        <form action={action}>
-            <div>
-                <label htmlFor="name" className="block">Имя</label>
-                <input id="name" name="name" placeholder="Имя" />
-            </div>
-            {state?.errors?.name && <ErrorMessage message={state.errors.name} />}
+        <form
+            action={action}
+            className="flex flex-col gap-3"
+        >
+            <UiLabel
+                name="Имя"
+                errorMessage={state?.errors?.name}
+            >
+                <UiInput name="name" placeholder="Введите имя" />
+            </UiLabel>
 
-            <div>
-                <label htmlFor="email" className="block">Email</label>
-                <input
+            <UiLabel
+                name="Email"
+                errorMessage={state?.errors?.email}
+            >
+                <UiInput
                     id="email"
                     name="email"
-                    placeholder="Email"
+                    placeholder="Введите email"
                     onChange={(e) => setEmail(e.target.value)}
                 />
-            </div>
-            {emailDebounce && <ErrorMessage message={emailDebounce} />}
-            {state?.errors?.email && <ErrorMessage message={state.errors.email} />}
+                {emailDebounce && <ErrorMessage message={emailDebounce} />}
+            </UiLabel>
 
-            <div>
-                <label htmlFor="password" className="block">Пароль</label>
-                <input id="password" name="password" placeholder="Пароль" />
-            </div>
-            {state?.errors?.password && (
-                <div>
-                    <p>Пароль должен:</p>
-                    {<ErrorMessage message={state.errors.password} />}
-                </div>
-            )}
+            <UiLabel
+                name="Пароль"
+                errorMessage={state?.errors?.password}
+            >
+                <UiInput type="password" name="password" placeholder="Введите пароль" />
+            </UiLabel>
 
-            <button
+            {state?.message && <ErrorMessage message={state.message} />}
+
+            <UiButton
                 type="submit"
                 aria-disabled={pending}
             >
                 {pending ? "Отправка..." : "Зарегистрироваться"}
-            </button>
+            </UiButton>
         </form>
     );
 };

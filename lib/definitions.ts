@@ -15,7 +15,12 @@ export const SignUpFormSchema = z.object({
         .trim()
 });
 
-export type FormState = {
+export const SignInFormSchema = z.object({
+    email: z.string().email({ message: "Пожалуйста, введите корректный email." }).trim(),
+    password: z.string().min(6, { message: "Длина не менее 6-ти символов." }).trim()
+});
+
+export type FormStateSignUp = {
     errors?: {
         name?: string[];
         email?: string[];
@@ -24,7 +29,15 @@ export type FormState = {
     message?: string;
 } | undefined;
 
+export type FormStateSignIn = {
+    errors?: {
+        email?: string[];
+        password?: string[];
+    };
+    message?: string;
+} | undefined;
+
 export type SessionPayload = {
     userId: number;
-    expiresAt: Date;
+    expires: Date;
 };
