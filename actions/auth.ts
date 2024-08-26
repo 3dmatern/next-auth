@@ -2,6 +2,8 @@ import bcrypt from "bcrypt";
 
 import { FormState, SignUpFormSchema } from "@/lib/definitions";
 import prisma from "@/lib/prisma";
+import { createSession, deleteSession } from "@/lib/session";
+import { redirect } from "next/navigation";
 
 export async function signUp(state: FormState, formData: FormData) {
     // 1. Валидация полей формы
@@ -38,4 +40,15 @@ export async function signUp(state: FormState, formData: FormData) {
             message: "При создании учетной записи произошла ошибка."
         }
     }
+
+    // 4. Создаем сессию пользователя
+    await createSession(newUser.id);
+
+    // 5. Редирект пользователя
+    redirect("/");
+};
+
+export function logOut() {
+    deleteSession();
+    redirect("/auth");  
 };
