@@ -1,10 +1,8 @@
-"use client";
+import { getSession } from "@/lib/session";
 
-import { useAuth } from "@/context/auth-context";
-
-export default function ProfilePage() {
-    const { currentUser } = useAuth();
+export default async function ProfilePage() {
+    const session = await getSession();
     return (
-        <pre>{JSON.stringify(currentUser, null, 2)}</pre>
+        <pre>{JSON.stringify(session, null, 2)}</pre>
     );
 };
