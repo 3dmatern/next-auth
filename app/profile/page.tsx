@@ -1,9 +1,10 @@
-import { getSession } from "@/lib/session";
+"use client";
 
-export default async function ProfilePage() {
-    const session = await getSession();
+import { useAuth } from "@/context/auth-context";
 
+export default function ProfilePage() {
+    const { currentUser } = useAuth();
     return (
-        <pre>{JSON.stringify(session, null, 2)}</pre>
+        <pre>{JSON.stringify(currentUser, null, 2)}</pre>
     );
 };

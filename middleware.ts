@@ -11,7 +11,6 @@ export const config = {
 
 export default async function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
-    console.log("middleware pathname:", pathname);
     const response = await updateSession(request);
 
     if (pathname === "/profile" && !response) {

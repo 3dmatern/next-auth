@@ -1,6 +1,6 @@
 "use server";
 
-import { jwtVerify, SignJWT } from "jose";
+import { JWTPayload, jwtVerify, SignJWT } from "jose";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -19,7 +19,7 @@ export async function encrypt(payload: SessionPayload) {
 
 export async function decrypt(session: string | undefined = "") {
     try {
-        const { payload } = await jwtVerify(session, encodeKey, {
+        const { payload } = await jwtVerify<JWTPayload & SessionPayload>(session, encodeKey, {
             algorithms: ["HS256"]
         });
         return payload;

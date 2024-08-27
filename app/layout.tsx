@@ -3,9 +3,11 @@ import type { Metadata } from "next";
 
 import "./globals.css";
 
-import { NavLinks } from "@/components/ui/nav-links";
 import { cn } from "@/lib/cn";
 import { getSession } from "@/lib/session";
+
+import AuthProvider from "@/context/auth-context";
+import { NavLinks } from "@/components/ui/nav-links";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -24,10 +26,12 @@ export default async function RootLayout({
     return (
         <html lang="ru">
             <body className={cn(`min-h-screen px-4 md:px-0`, inter.className)}>
-                <NavLinks isSession={!!session} />
-                <main className="h-full flex flex-col items-center justify-between">
-                    {children}
-                </main>
+                <AuthProvider session={session}>
+                    <NavLinks />
+                    <main className="h-full flex flex-col items-center justify-between">
+                        {children}
+                    </main>
+                </AuthProvider>
             </body>
         </html>
     );
